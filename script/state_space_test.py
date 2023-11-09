@@ -132,13 +132,23 @@ def loglikelihood(yobs, y, D):
     return -0.5 * l
 
 #%% パラメータ推定（最尤法）
-data = np.array([[df_data.at[idx, f"y_lag{i}"] for i in range(7)] for idx in df_data.index])
-G = np.zeros((7,7))# 状態方程式の行列
-G[0,6] = G[1,0] = G[2,1] = G[3,2] = G[4,3] = G[5,4] = G[6,5] = 1 # weeklymodel
-F = np.eye(7) # 観測方程式の行列
+data = np.array([[df_data.at[idx, f"y_lag{i}"] for i in range(6)] for idx in df_data.index])
+# 状態方程式の行列
+G = np.array(
+    [[2, -1, 0 ,0 ,0 ,0 ,0 ,0],
+     [1, 0, 0, 0, 0, 0, 0, 0],
+     [0, 0, -1, -1, -1, -1, -1, -1],
+     [0, 0, 1, 0, 0, 0, 0, 0],
+     [0, 0, 0, 1, 0, 0, 0, 0],
+     [0, 0, 0, 0, 1, 0, 0, 0],
+     [0, 0, 0, 0, 0, 1, 0, 0],
+     [0, 0, 0, 0, 0, 0, 1, 0]]
+)
+F = np.array([[1, 0, 1, 0, 0, 0, 0, 0]]) # 観測方程式の行列
 T = len(df_data)
 Tpred = 7*2
 
+#%%
 def objective_function(params):
     W = np.eye(7) * params[0] # 恣意的に与える必要がある
     V = np.eye(7) * params[1] # 上に同じ
