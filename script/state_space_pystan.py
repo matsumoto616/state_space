@@ -62,3 +62,44 @@ fig = go.Figure()
 fig.add_trace(go.Scatter(x=df_data.index, y=df_data["y"])) 
 
 #%%
+# stanコードの記述
+stan_code = '''
+data {
+    int T;        // 学習期間
+    vector[T] y;  // 観測値
+}
+parameters {
+    vector[T] mu; // 状態の推定値
+    real<lower=0> s_v; // システム誤差の標準偏差
+    real<lower=0> s_w; // 観測誤差の標準偏差
+}
+model {
+    // 状態方程式
+    for (i in 2:T) {
+        mu[i] ~ normal(mu[i-1], s_v);
+    }
+    // 観測方程式
+    for (i in 1:T) {
+        y[i] ~ normal(mu[i], s_w);
+    }
+}
+
+'''
+
+#%% モデルのコンパイル
+data = {
+    "T": len(df_data),
+    "y": df_data["y"].values
+}
+
+posterior = stan.build(stan_code, data)
+
+# %%
+fit = posterior.sample(num_chains=4, num_samples=1000)
+
+# %%
+df = fit.to_frame()
+print(df.describe().T)
+
+# %%
+df
