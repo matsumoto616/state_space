@@ -5,3 +5,4 @@ pystan
 plotly
 cython
 ipykernel
+pytest
