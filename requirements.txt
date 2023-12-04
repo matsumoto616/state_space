@@ -1,8 +1,8 @@
 numpy
 pandas
+ydata-profiling
 statsmodels
-pystan
 plotly
-cython
+jupyter
 ipykernel
 pytest

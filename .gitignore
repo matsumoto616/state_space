@@ -1,4 +1,8 @@
 \venv-state-space
 \build
+\old
+\.pytest_cache
+\.vscode
+\__pycache__
 .RData
 .Rhistory
